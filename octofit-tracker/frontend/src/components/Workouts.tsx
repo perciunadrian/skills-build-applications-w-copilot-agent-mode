@@ -1,4 +1,5 @@
 import { CapabilityCard } from './CapabilityCard.js';
+import { workoutSuggestionsPath } from '../api/client.js';
 
 type WorkoutSuggestion = { title: string; reason: string };
 type WorkoutResponse = { suggestions: WorkoutSuggestion[] };
@@ -8,7 +9,7 @@ export default function Workouts() {
     <CapabilityCard<WorkoutResponse>
       title="Workout suggestions"
       description="Recommend workouts from activity patterns."
-      endpoint={`/api/workouts/suggestions/${encodeURIComponent('mona@example.com')}`}
+      endpoint={workoutSuggestionsPath('mona@example.com')}
       emptyMessage="No workout suggestions yet."
       isEmpty={({ suggestions }) => suggestions.length === 0}
       renderContent={({ suggestions }) => (
