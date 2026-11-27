@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 
 type LoadState<T> =
   | { status: 'loading' }
-  | { status: 'error' }
+  | { status: 'error'; message: string }
   | { status: 'loaded'; data: T };
 
 type Props<T> = {
@@ -24,8 +24,13 @@ export function CapabilityCard<T>({ title, description, load, emptyMessage, isEm
       .then((data) => {
         if (active) setState({ status: 'loaded', data });
       })
-      .catch(() => {
-        if (active) setState({ status: 'error' });
+      .catch((error: unknown) => {
+        if (active) {
+          setState({
+            status: 'error',
+            message: error instanceof Error ? error.message : 'Unexpected request failure',
+          });
+        }
       });
 
     return () => {
@@ -41,7 +46,13 @@ export function CapabilityCard<T>({ title, description, load, emptyMessage, isEm
         {state.status === 'loading' ? (
           <p role="status">Loading {title.toLowerCase()}...</p>
         ) : state.status === 'error' ? (
-          <p role="alert">Unable to load {title.toLowerCase()}. Please try again.</p>
+          <>
+            <p role="alert">Unable to load {title.toLowerCase()}. Please try again.</p>
+            <details>
+              <summary>Error details</summary>
+              <p>{state.message}</p>
+            </details>
+          </>
         ) : isEmpty(state.data) ? (
           <p>{emptyMessage}</p>
         ) : (

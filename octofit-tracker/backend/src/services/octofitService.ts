@@ -20,8 +20,9 @@ export async function createActivity(input: unknown) {
     typeof type !== 'string' ||
     type.trim().length === 0 ||
     typeof minutes !== 'number' ||
-    !Number.isFinite(minutes) ||
-    minutes <= 0
+    !Number.isInteger(minutes) ||
+    minutes < 1 ||
+    minutes > 1440
   ) {
     throw Object.assign(new Error('Activity requires valid userId, teamId, type, and minutes'), { status: 400 });
   }
